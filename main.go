@@ -7,12 +7,14 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/monitor"
 	"github.com/gofiber/fiber/v2/middleware/recover"
+	"github.com/gofiber/fiber/v2/middleware/requestid"
 	"log"
 	"mocerize-api/pkg/config"
 	"mocerize-api/pkg/firebase"
 	"mocerize-api/pkg/firebase/auth"
 	"mocerize-api/pkg/firebase/database"
 	"mocerize-api/pkg/firebase/storage"
+	"mocerize-api/pkg/middleware"
 	"mocerize-api/pkg/routes/api/v1"
 )
 
@@ -87,6 +89,8 @@ func main() {
 	app.Use(recover.New())
 	//app.Use(middleware.Auth)
 	app.Use(logger.New())
+	app.Use(requestid.New())
+	app.Use(middleware.Limiter())
 
 	// monitoring
 	app.Get("/monitoring", monitor.New())
