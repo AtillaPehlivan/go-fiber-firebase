@@ -15,7 +15,9 @@ import (
 	"mocerize-api/pkg/firebase/database"
 	"mocerize-api/pkg/firebase/storage"
 	"mocerize-api/pkg/middleware"
+	"mocerize-api/pkg/repository"
 	"mocerize-api/pkg/routes/api/v1"
+	"mocerize-api/service"
 )
 
 func main() {
@@ -87,7 +89,7 @@ func main() {
 
 	// middlewares
 	app.Use(recover.New())
-	//app.Use(middleware.Auth)
+	app.Use(middleware.Auth)
 	app.Use(logger.New())
 	app.Use(requestid.New())
 	app.Use(middleware.Limiter())
@@ -95,16 +97,27 @@ func main() {
 	// monitoring
 	app.Get("/monitoring", monitor.New())
 
-	// setup /api/v1/* routes
-	route.SetupApiV1(app)
+	//api  route
+	apiRoute := app.Group("/api")
+	//api/v1 route
+	apiV1Route := apiRoute.Group("/v1")
 
-	//404 handler
+	// create Repos
+	userRepository := repository.NewUserRepository(firestore.Client())
+
+	// create Services
+	userService := service.NewUserService(userRepository)
+
+	route.SetupUserRoute(apiV1Route, userService)
+
+	//404 handler must be last line
 	app.Use(func(c *fiber.Ctx) error {
 		return c.SendStatus(fiber.StatusNotFound)
 	})
 
-	defer firestore.Client().Close()
+	//eyJhbGciOiJSUzI1NiIsImtpZCI6IjY5NGNmYTAxOTgyMDNlMjgwN2Q4MzRkYmE2MjBlZjczZjI4ZTRlMmMiLCJ0eXAiOiJKV1QifQ.eyJuYW1lIjoiQXRpbGEgUGVobGl2YW4iLCJwaWN0dXJlIjoiaHR0cHM6Ly9saDMuZ29vZ2xldXNlcmNvbnRlbnQuY29tL2EtL0FPaDE0R2lkVHFSTlhtMTRXVFhRanA0dnczT0JhV21Ec3JUWXRESF9NdDRIX2c9czk2LWMiLCJpc3MiOiJodHRwczovL3NlY3VyZXRva2VuLmdvb2dsZS5jb20vbW9ja2VyaXplIiwiYXVkIjoibW9ja2VyaXplIiwiYXV0aF90aW1lIjoxNjM2MzIzMjAyLCJ1c2VyX2lkIjoiVHNaelF1dnhmWlhqTzBRYTR6Q1Voc0pOeEw3MyIsInN1YiI6IlRzWnpRdXZ4ZlpYak8wUWE0ekNVaHNKTnhMNzMiLCJpYXQiOjE2MzYzMjM0ODIsImV4cCI6MTYzNjMyNzA4MiwiZW1haWwiOiJ3ZWIuYXRpbGxhcGVobGl2YW5AZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsImZpcmViYXNlIjp7ImlkZW50aXRpZXMiOnsiZ29vZ2xlLmNvbSI6WyIxMTM2MzAwMDgzNTAyNDYxMTA4MjQiXSwiZW1haWwiOlsid2ViLmF0aWxsYXBlaGxpdmFuQGdtYWlsLmNvbSJdfSwic2lnbl9pbl9wcm92aWRlciI6Imdvb2dsZS5jb20ifX0.fc_G6VKKwBho3PueOyahy2EHTdz-C4k08gvO6siPEt7DZQ72qvHgaoZ2N_Rdt_22dgxlwXkT6lmUNwEyFp_c3ZJFGrM6OrKi3jszWfxKVGF1Pw66NYRXUMvr2JgeU8a0c48zcH-tXnBHJXHbZSYrtfOPyhpRTCDwc4NrEIyLo0BYp2BQskZAnEGVz-1mCIpTu4xUpaq6fyHvbfR8hAT8GcpIrk537XsE9nltqwkmlkylx2Mv87aWC0NPuwrx2lOpa3YFCm8bxH2jxEYgmnV5_d9zF66HRiIgVACVlqoIbi-DrfqJSZU4tDY5VArUxA7Fa7wQN2WUHnDGfqGxHJNXTw
 
+	defer firestore.Client().Close()
 	// run server
 	log.Fatal(app.Listen(":" + config.Get("APP_PORT")))
 

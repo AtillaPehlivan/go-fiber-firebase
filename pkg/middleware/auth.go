@@ -15,8 +15,6 @@ func Auth(c *fiber.Ctx) error {
 		return c.SendStatus(fiber.StatusUnauthorized)
 	}
 	headerToken := strings.ReplaceAll(authHeader, "Bearer ", "")
-	log.Println(authHeader)
-	log.Println(headerToken)
 
 	token, err := auth.Client().VerifyIDToken(context.Background(), headerToken)
 	if err != nil {
@@ -26,6 +24,6 @@ func Auth(c *fiber.Ctx) error {
 
 	c.Locals("uid", token.UID)
 
-	log.Println(c.Locals("uid"))
+	log.Println(c.Locals("UID"))
 	return c.Next()
 }

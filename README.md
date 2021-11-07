@@ -8,15 +8,17 @@
 go run main.go
 ```
 
+### please fill the .env file for production
+
 
 ## Production
 
 ```bash
 docker build -t mockerize-backend .
-docker run -d -p 3000:3000 mockerize-backend
+docker run -d -p 8080:8080 mockerize-backend
 ```
 
-Go to `http://localhost:3000`:
+Go to `http://localhost:8080`:
 
 
 

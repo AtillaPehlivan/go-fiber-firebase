@@ -15,6 +15,6 @@ WORKDIR /app
 
 COPY --from=build /go/src/mockerize/mockerize .
 
-EXPOSE 3000
+EXPOSE 8080
 
 CMD ["./mockerize"]
