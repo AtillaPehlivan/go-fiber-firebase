@@ -22,7 +22,7 @@ func Auth(c *fiber.Ctx) error {
 		return c.SendStatus(fiber.StatusUnauthorized)
 	}
 
-	c.Locals("uid", token.UID)
+	c.Locals("UID", token.UID)
 
 	log.Println(c.Locals("UID"))
 	return c.Next()
