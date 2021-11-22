@@ -83,6 +83,7 @@ func main() {
 		AppName:      "Mockerize",
 		ServerHeader: "mockerize.com",
 		ErrorHandler: func(c *fiber.Ctx, err error) error {
+			log.Println(err.Error())
 			return c.Status(fiber.StatusInternalServerError).SendString(err.Error())
 		},
 	})
@@ -104,11 +105,14 @@ func main() {
 
 	// create Repos
 	userRepository := repository.NewUserRepository(firestore.Client())
+	mockRepository := repository.NewMockRepository(firestore.Client())
 
 	// create Services
 	userService := service.NewUserService(userRepository)
+	mockService := service.NewMockService(mockRepository)
 
 	route.SetupUserRoute(apiV1Route, userService)
+	route.SetupMockRoute(apiV1Route, mockService)
 
 	//404 handler must be last line
 	app.Use(func(c *fiber.Ctx) error {

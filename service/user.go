@@ -8,6 +8,7 @@ import (
 type UserService interface {
 	FindByUID(UID string) (*model.User, error)
 	FindByToken(Token string) (*model.User, error)
+	Update(UID string, User *model.User) (*model.User, error)
 }
 
 type userService struct {
@@ -26,4 +27,8 @@ func (s userService) FindByUID(UID string) (*model.User, error) {
 
 func (s userService) FindByToken(Token string) (*model.User, error) {
 	return s.userRepository.FindByToken(Token)
+}
+
+func (s userService) Update(UID string, User *model.User) (*model.User, error) {
+	return s.userRepository.Update(UID, User)
 }

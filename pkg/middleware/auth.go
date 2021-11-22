@@ -25,5 +25,6 @@ func Auth(c *fiber.Ctx) error {
 	c.Locals("UID", token.UID)
 
 	log.Println(c.Locals("UID"))
+
 	return c.Next()
 }
