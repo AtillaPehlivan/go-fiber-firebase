@@ -26,10 +26,8 @@ func main() {
 
 	// init config
 	if err := config.Load(); err != nil {
-		log.Fatalln("Config Load Error ", err)
+		log.Println("Config .env Load Error ", err)
 	}
-	log.Println("Environment config loading successfully")
-
 	// init firebase
 	if err := firebase.Setup(ctx); err != nil {
 		log.Fatalln("Firebase Error", err)

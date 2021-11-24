@@ -4,6 +4,7 @@ import (
 	"context"
 	firebase "firebase.google.com/go"
 	"google.golang.org/api/option"
+	"log"
 	"mocerize-api/pkg/config"
 	"os"
 )
@@ -23,7 +24,16 @@ func Setup(ctx context.Context) error {
 		return err
 	}
 
-	options := option.WithCredentialsFile(currentDirectory + config.Get("FIREBASE_CREDENTIALS_FILE"))
+	var options option.ClientOption
+
+	if config.Get("FIREBASE_CREDENTIALS_FILE") != "" {
+		log.Println("read FIREBASE_CREDENTIALS_FILE")
+		options = option.WithCredentialsFile(currentDirectory + config.Get("FIREBASE_CREDENTIALS_FILE"))
+	} else {
+		log.Println("read FIREBASE_CREDENTIALS")
+		log.Println(config.Get("FIREBASE_CREDENTIALS"))
+		options = option.WithCredentialsJSON([]byte(config.Get("FIREBASE_CREDENTIALS")))
+	}
 
 	app, err := firebase.NewApp(ctx, nil, options)
 	if err != nil {
