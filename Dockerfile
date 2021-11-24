@@ -15,8 +15,6 @@ WORKDIR /app
 
 COPY --from=build /go/src/mockerize/mockerize .
 
-ENV PORT 8080
-
 EXPOSE 8080
 
 
