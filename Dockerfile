@@ -17,4 +17,6 @@ COPY --from=build /go/src/mockerize/mockerize .
 
 EXPOSE 8080
 
+
+
 CMD ["./mockerize"]
