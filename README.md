@@ -1,4 +1,12 @@
-# Mockerize Backend API
+# Backend API Example
+
+FiberGo Framework Docs : https://github.com/gofiber
+
+### Info
+This application using firebase ecosystem 
+- Firebase Auth
+- Cloud Storage
+- Firestore 
 
 ## Development
 
